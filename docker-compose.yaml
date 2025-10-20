@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  solace:
+    image: solace/solace-pubsub-standard:latest
+    container_name: solace-broker
+    ports:
+      - "8080:8080"    # Web management console
+      - "55555:55555"  # SMF (Messaging)
+      - "8008:8008"    # REST
+      - "1883:1883"    # MQTT
+      - "5672:5672"    # AMQP
+    environment:
+      - username_admin_globalaccesslevel=admin
+      - username_admin_password=admin
+      - system_scaling_maxconnectioncount=100
+      - service_semp_enable=1
+    ulimits:
+      nofile:
+        soft: 2448
+        hard: 38048
+    volumes:
+      - solace_data:/var/lib/solace
+    restart: unless-stopped
+
+  oracle-db:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle-free
+    environment:
+      - ORACLE_PWD=Admin123
+      - ORACLE_SID=FREE
+    ports:
+      - "1521:1521"   # SQL*Net (Oracle DB)
+      - "5500:5500"   # EM Express
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+    restart: unless-stopped
+
+volumes:
+  solace_data:
+  oracle_data:
