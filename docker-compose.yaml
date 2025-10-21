@@ -40,8 +40,8 @@ services:
     image: solace/solace-pubsub-connector-debezium:3.0.3
     container_name: solace-pubsub-connector-debezium
     depends_on:
-      - solace-broker
-      - oracle-free
+      - solace
+      - oracle-db
     environment:
       SOLACE_JAVA_HOST: ${SOLACE_JAVA_HOST:-host.docker.internal:55555}
       # Create a read-only user for the healthcheck
