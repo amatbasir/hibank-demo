@@ -19,7 +19,7 @@ services:
     ulimits:
       nofile:
         soft: 2448
-        hard: 38048
+        hard: 1048576
     volumes:
       - solace_data:/var/lib/solace
     restart: unless-stopped
