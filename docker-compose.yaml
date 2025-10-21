@@ -15,6 +15,7 @@ services:
       - username_admin_password=admin
       - system_scaling_maxconnectioncount=100
       - service_semp_enable=1
+    shm_size: 2g
     ulimits:
       nofile:
         soft: 2448
