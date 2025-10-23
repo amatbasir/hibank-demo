@@ -9,6 +9,7 @@ spring:
     # - https://docs.spring.io/spring-cloud-stream/docs/current/reference/html/spring-cloud-stream.html
     # - https://github.com/SolaceProducts/solace-spring-cloud/tree/master/solace-spring-cloud-starters/solace-spring-cloud-stream-starter
     stream:
+      binders:
       bindings:  # Workflow bindings
         input-0:
           destination: Solace/Queue/0   # Queue name
@@ -74,10 +75,10 @@ solace:
   java:  # Solace PubSub+ connection details. For more info: https://github.com/SolaceProducts/solace-spring-boot/tree/master/solace-spring-boot-starters/solace-java-spring-boot-starter#updating-your-application-properties
     connect-retries: -1
     reconnect-retries: -1
-#    host: tcp://localhost:55555
-#    msg-vpn: default
-#    client-username: default
-#    client-password: default
+    host: tcp://localhost:55555
+    msg-vpn: default
+    client-username: default
+    client-password: default
 
 management:
   metrics:  # Metrics monitoring systems. For more info: https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.metrics
