@@ -72,7 +72,7 @@ debezium:
         id: hibankcdc
         name: hibankcdcd1
       password: debezium123
-      dbname: FREEE
+      dbname: FREE
       pdb.name: FREEPDB1
       port: 1521
       hostname: oracle-free
