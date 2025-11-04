@@ -74,7 +74,7 @@ debezium:
       password: debezium123
       dbname: FREEPDB1
       port: 1521
-      hostname: localhost
+      hostname: oracle-free
       allowPublicKeyRetrieval: 'true'
     table:
       include:
