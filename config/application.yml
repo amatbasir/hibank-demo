@@ -17,12 +17,10 @@ solace:
       0:
         enabled: true
   java:
-    host: "tcps://mr-connection-c9cn9q3pajz.messaging.solace.cloud:55443"
-    msg-vpn: "gcp-broker"
-    client-username: "solace-cloud-client"
-    client-password: "2sb0pgtkqenrd6mtjrdljoo7nj"
-    trust-store: "/app/config/client-truststore.jks"
-    trust-store-password: "changeit"
+    host: ${SOLACE_HOST:tcp://localhost:55555}
+    msg-vpn: ${SOLACE_VPN:default}
+    client-username: ${SOLACE_USERNAME:default}
+    client-password: ${SOLACE_PASSWORD:default}
 
 management:
   metrics:
