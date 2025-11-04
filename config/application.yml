@@ -65,8 +65,6 @@ debezium:
     database:
       connection:
         adapter: logminer
-      oracle:
-        version: 23c
       user: "C##DEBEZIUM"
       server:
         id: hibankcdc
