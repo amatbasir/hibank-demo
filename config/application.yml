@@ -5,56 +5,24 @@
 spring:
   cloud:
     stream:
-      binders:
-        solace:
-          type: solace
-          environment:
-            solace:
-              java:
-                host: ${SOLACE_JAVA_HOST:tcp://localhost:55555}
-                msg-vpn: ${SOLACE_VPN:default}
-                client-username: ${SOLACE_USERNAME:default}
-                client-password: ${SOLACE_PASSWORD:default}
-                connect-retries: -1
-                reconnect-retries: -1
-        cdcsupplier:
-          type: solace
-          environment:
-            solace:
-              java:
-                host: ${SOLACE_JAVA_HOST:tcp://localhost:55555}
-                msg-vpn: ${SOLACE_VPN:default}
-                client-username: ${SOLACE_USERNAME:default}
-                client-password: ${SOLACE_PASSWORD:default}
-                connect-retries: -1
-                reconnect-retries: -1
       bindings:
-        output-0:
-          destination: ${CDC_OUTPUT_DESTINATION:cdc/oracle/customer}
+        input-0:
           binder: cdcsupplier
-
+        output-0:
+          destination: oracle/cdc/fallback
+          binder: solace
 solace:
   connector:
     workflows:
       0:
         enabled: true
-        name: oracle-cdc-source
-        source:
-          type: oracle
-          config:
-            # --- Debezium Oracle (LogMiner) Source Configuration ---
-            debezium.properties.database.hostname: ${ORACLE_HOST:localhost}
-            debezium.properties.database.port: ${ORACLE_PORT:1521}
-            debezium.properties.database.user: ${ORACLE_USER:C##DEBEZIUM}
-            debezium.properties.database.password: ${ORACLE_PASSWORD:debezium123}
-            debezium.properties.database.dbname: ${ORACLE_DB:FREEPDB1}
-            debezium.properties.database.server.name: ${ORACLE_SERVER:oracle-cdc}
-            debezium.properties.database.connection.adapter: logminer
-            debezium.properties.snapshot.mode: initial
-            debezium.properties.include.schema.changes: true
-            debezium.properties.table.include.list: APPUSER.CUSTOMERS
-            debezium.properties.database.history.kafka.bootstrap.servers: ${KAFKA_BOOTSTRAP:localhost:9092}
-            debezium.properties.database.history.kafka.topic: schema-changes.oracle
+  java:
+    host: "tcps://mr-connection-c9cn9q3pajz.messaging.solace.cloud:55443"
+    msg-vpn: "gcp-broker"
+    client-username: "solace-cloud-client"
+    client-password: "2sb0pgtkqenrd6mtjrdljoo7nj"
+    trust-store: "/app/config/client-truststore.jks"
+    trust-store-password: "changeit"
 
 management:
   metrics:
@@ -72,3 +40,47 @@ logging:
     com.solace.connectors.debezium: INFO
     com.solace.connector.core: INFO
     com.solace.spring.cloud.stream.binder: INFO
+cdc:
+  stream:
+    retryDelayOnException: 2000 #milliseconds to wait before next retry
+    retriesOnException: 3
+    failIfDynamicDestinationMismatch: true # true -> will stop the connector in case of wrong column name configuration in dynamic destination, false -> fallback to default destination if configured dynamicDestination fails due to wrong column name configuration
+    dynamicDestination:  "*:oracle/{tablename}/{operation}"
+  schema: false
+  flattening:
+    enabled: false
+debezium:
+  properties:
+    # max:
+    #   batch:
+    #     size: 1
+    #   queue:
+    #     size: 3
+    include:
+      schema:
+        changes: false
+    topic:
+      prefix: "solace_cdc"
+    decimal:
+      handling:
+        mode: string
+    database:
+      connection:
+        adapter: logminer
+      oracle:
+        version: 12+
+      user: C##DBZUSER
+      server:
+        id: hibankcdc
+        name: hibankcdcd1
+      password: strongPassw0rd!
+      dbname: FREE
+      port: 1521
+      hostname: oracle-free
+      allowPublicKeyRetrieval: 'true'
+    table:
+      include:
+        list: customers
+    connector:
+      class: io.debezium.connector.oracle.OracleConnector
+    name: oracle-connector
