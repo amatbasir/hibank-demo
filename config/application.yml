@@ -71,7 +71,7 @@ debezium:
       server:
         id: hibankcdc
         name: hibankcdcd1
-      password: debezium12
+      password: debezium123
       dbname: FREE
       pdb.name: FREEPDB1
       port: 1521
