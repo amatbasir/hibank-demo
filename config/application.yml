@@ -67,7 +67,7 @@ debezium:
         adapter: logminer
       oracle:
         version: 12+
-      user: C##DEBEZIUM
+      user: "C##DEBEZIUM"
       server:
         id: hibankcdc
         name: hibankcdcd1
