@@ -1,0 +1,74 @@
+# --------------------------
+# ORACLE → SOLACE CDC CONNECTOR
+# --------------------------
+
+spring:
+  cloud:
+    stream:
+      binders:
+        solace:
+          type: solace
+          environment:
+            solace:
+              java:
+                host: ${SOLACE_JAVA_HOST:tcp://localhost:55555}
+                msg-vpn: ${SOLACE_VPN:default}
+                client-username: ${SOLACE_USERNAME:default}
+                client-password: ${SOLACE_PASSWORD:default}
+                connect-retries: -1
+                reconnect-retries: -1
+        cdcsupplier:
+          type: solace
+          environment:
+            solace:
+              java:
+                host: ${SOLACE_JAVA_HOST:tcp://localhost:55555}
+                msg-vpn: ${SOLACE_VPN:default}
+                client-username: ${SOLACE_USERNAME:default}
+                client-password: ${SOLACE_PASSWORD:default}
+                connect-retries: -1
+                reconnect-retries: -1
+      bindings:
+        output-0:
+          destination: ${CDC_OUTPUT_DESTINATION:cdc/oracle/customer}
+          binder: cdcsupplier
+
+solace:
+  connector:
+    workflows:
+      0:
+        enabled: true
+        name: oracle-cdc-source
+        source:
+          type: oracle
+          config:
+            # --- Debezium Oracle (LogMiner) Source Configuration ---
+            debezium.properties.database.hostname: ${ORACLE_HOST:localhost}
+            debezium.properties.database.port: ${ORACLE_PORT:1521}
+            debezium.properties.database.user: ${ORACLE_USER:C##DEBEZIUM}
+            debezium.properties.database.password: ${ORACLE_PASSWORD:debezium123}
+            debezium.properties.database.dbname: ${ORACLE_DB:FREEPDB1}
+            debezium.properties.database.server.name: ${ORACLE_SERVER:oracle-cdc}
+            debezium.properties.database.connection.adapter: logminer
+            debezium.properties.snapshot.mode: initial
+            debezium.properties.include.schema.changes: true
+            debezium.properties.table.include.list: APPUSER.CUSTOMERS
+            debezium.properties.database.history.kafka.bootstrap.servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+            debezium.properties.database.history.kafka.topic: schema-changes.oracle
+
+management:
+  metrics:
+    export:
+      simple:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics,loggers,logfile,channels,env,workflows,leaderelection,bindings"
+
+logging:
+  level:
+    root: INFO
+    com.solace.connectors.debezium: INFO
+    com.solace.connector.core: INFO
+    com.solace.spring.cloud.stream.binder: INFO
