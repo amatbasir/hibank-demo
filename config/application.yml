@@ -79,7 +79,7 @@ debezium:
       allowPublicKeyRetrieval: 'true'
     table:
       include:
-        list: customers
+        list: appuser.customers
     connector:
       class: io.debezium.connector.oracle.OracleConnector
     name: oracle-connector
