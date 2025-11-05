@@ -57,6 +57,12 @@ debezium:
     include:
       schema:
         changes: false
+    offset:
+      flush:
+        interval:
+           ms: '0'
+        storage.file.filename: ./offset.dat
+    schema.history.internal.file.filename: ./dbhistory.dat
     topic:
       prefix: "solace_cdc"
     decimal:
@@ -73,7 +79,7 @@ debezium:
         name: hibankcdcd1
       password: debezium123
       dbname: FREE
-      pdb.name: FREEPDB1
+      # pdb.name: FREEPDB1
       port: 1521
       hostname: 172.31.22.73
       allowPublicKeyRetrieval: 'true'
